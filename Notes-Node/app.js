@@ -15,7 +15,9 @@ const argv = yargs.argv;
 
 var cmd = argv._[0];
 
-//console.log('Command:', cmd);
+console.log('Command:', cmd);
+
+console.log('Yargs', argv);
 
 if(cmd == "add") {
 	notes.addNote(argv.title, argv.body);
@@ -32,9 +34,9 @@ else if(cmd == "read") {
 else if(cmd == "remove") {
 	notes.removeNote(argv.title);
 }
-else{
+else
 	console.log("Command not recognized");
-}
+
 
 // console.log('process argv', process.argv);
 

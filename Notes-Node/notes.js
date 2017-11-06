@@ -13,7 +13,7 @@ var addNote = (title, body) => {
 
 	};
 
-	try{ //will run if no data in notes-data.json
+	try { //will run if no data in notes-data.json
 
 		var notesString = fs.readFileSync('notes-data.json');
 
@@ -23,11 +23,23 @@ var addNote = (title, body) => {
 
 	}
 
-	notes.push(note);
+	var duplicateNotes = notes.filter((note) => note.title === title);
+	console.log("Dup notes.",duplicateNotes);
 
-	fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+	if(duplicateNotes.length === 0){
 
+		notes.push(note);
+
+		fs.writeFileSync('notes-data.json', JSON.stringify(notes));
+	}
+
+	else
+		console.log('note already exists');
+	
+	
 };
+
+
 
 
 var getAll = () => {
