@@ -1,10 +1,10 @@
-const fs = require('fs');
+// const fs = require('fs');
 
-const os = require('os');
+// const os = require('os');
 
 const notes = require('./notes.js');
 
-const yargs = require('yargs')
+const yargs = require('yargs');
 
 //const _ = require('lodash');
 //console.log(_.isString("hey"));
@@ -33,7 +33,7 @@ else if(cmd == "remove") {
 	notes.removeNote(argv.title);
 }
 else{
-	console.log("Command not recongnized");
+	console.log("Command not recognized");
 }
 
 // console.log('process argv', process.argv);
