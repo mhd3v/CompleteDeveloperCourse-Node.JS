@@ -20,7 +20,15 @@ console.log('Command:', cmd);
 console.log('Yargs', argv);
 
 if(cmd == "add") {
-	notes.addNote(argv.title, argv.body);
+	note = notes.addNote(argv.title, argv.body);
+	
+	if(note){
+		console.log(`Note added`);
+		notes.logNote(note);
+	}
+
+	else
+		console.log("Note not added!");
 }
 
 else if(cmd == "list") {
@@ -28,11 +36,25 @@ else if(cmd == "list") {
 }
 
 else if(cmd == "read") {
-	notes.getNote(argv.title);
+	var note = notes.getNote(argv.title);
+
+	if(note) {
+		console.log('Note found! Printing:');
+
+		notes.logNote(note);
+	}
+
+	else {
+		console.log("Note not found");
+	}
 }
 
 else if(cmd == "remove") {
-	notes.removeNote(argv.title);
+	var noteRemoved = notes.removeNote(argv.title);
+
+	var message = noteRemoved ? 'Note was removed!' : 'Note not found';
+
+	console.log(message);
 }
 else
 	console.log("Command not recognized");
