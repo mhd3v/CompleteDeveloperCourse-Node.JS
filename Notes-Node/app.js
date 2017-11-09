@@ -11,13 +11,38 @@ const yargs = require('yargs');
 // var filteredArray = _.uniq([2,4,2,4]);
 // console.log(filteredArray);
 
-const argv = yargs.argv;
+var titleOptions = {
+
+	describe: 'Title of note',
+	demand: true,
+	alias: 't'
+}
+
+var bodyOptions = {
+
+	describe: 'Body of the note',
+	demand: true,
+	alias: 'b'
+}
+
+const argv = yargs
+			.command('add','Add a new note', {//options obj
+				title:titleOptions,
+				body: bodyOptions
+			})
+			.command('list','List all notes')
+			.command('read', 'Read a notes', {
+				title:titleOptions
+			})
+			.command('remove','Remove note', {
+				title:titleOptions
+			})
+			.help()
+			.argv;
 
 var cmd = argv._[0];
 
 console.log('Command:', cmd);
-
-console.log('Yargs', argv);
 
 if(cmd == "add") {
 	note = notes.addNote(argv.title, argv.body);
@@ -32,7 +57,13 @@ if(cmd == "add") {
 }
 
 else if(cmd == "list") {
-	notes.getAll();
+	var allNotes = notes.getAll();
+
+	console.log(`Printing ${allNotes.length} notes!`);
+
+	allNotes.forEach((note) => {
+		notes.logNote(note);
+	});
 }
 
 else if(cmd == "read") {
