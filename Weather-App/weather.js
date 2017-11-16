@@ -1,6 +1,6 @@
-const request = require('request'); //external module for http requests
-
 const yargs = require('yargs');
+
+const geocode = require('./geocode/geocode');
 
 const argv = yargs
 	.options({
@@ -15,17 +15,12 @@ const argv = yargs
 	.alias('help', 'h') //set alias for help, so user can just write -h instead of --help
 	.argv;
 
-var encodedAddress = encodeURIComponent(argv.a); //takes a string and converts it to HTTP compatible address
+geocode.geocodeAddress(argv.a, (errorMessage, results) => {
 
-request({ // function of request module
-	url: `http://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`,
-	json: true
-}, (error, response, body) => { //callback function, ran when data is returned from http request
+	if(errorMessage)
+		console.log(errorMessage);
 
-	console.log(`Address: ${body.results[0].formatted_address}`);
-
-	console.log(`Latitude: ${body.results[0].geometry.location.lat}`);
-
-	console.log(`Longitude: ${body.results[0].geometry.location.lng}`);
+	else
+		console.log(JSON.stringify(results, undefined, 2));
 
 });
