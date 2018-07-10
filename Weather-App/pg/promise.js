@@ -1,13 +1,44 @@
-var somePromise = new Promise((resolve, reject) => {
-	setTimeout(() => {
-		//resolve('Hey, it worked!');
-		reject('Unable to fulfill promise');
-	}, 2500);
-	
-});
+//similar to callbacks but we can provide different functions for success and failure cases
 
-somePromise.then((message) => { //somePromiseObject.then(firstMethod_ifResolved, secondMethod_ifFailed)
-	console.log('Success', message);
-}, (errorMessage) => {
-	console.log('Error', errorMessage);
+
+var add = (a, b) => {
+
+	return new Promise((resolve, reject) => {
+
+		setTimeout(() => {
+
+			if(typeof a === "number" && typeof b === "number")
+				resolve(a+b);
+			else
+				reject("Arguments must be numbers!");
+
+		}, 2500);
+
+	});
+
+};
+
+add(1,2).then((res) => {
+	console.log(res);
+	return add(res, 33); //returns another promise
+}).then((res) => { // then on the new promise
+	console.log(res);
+}).catch((errorMessage) => { // if either of the two promises rejected, this gets called
+	console.log(errorMessage);
 });
+// var somePromise = new Promise((resolve, reject) => {
+
+// 	setTimeout(() => {
+
+// 		resolve("Hey the promise resolved!");
+// 		//reject("The promise failed");
+
+// 	}, 2500);
+
+// });
+
+// somePromise.then((successMessage)=> {  //.then(resolvedFunction(), rejectedFunction());
+// 	console.log(successMessage);
+// }, (failureMessage) => {
+// 	console.log(failureMessage);
+// });

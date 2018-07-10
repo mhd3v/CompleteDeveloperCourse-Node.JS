@@ -9,7 +9,7 @@ var geocodeAddress = (address, callback) => {
 	request({ // function of request module
 	url: `http://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`,
 	json: true
-}, (error, response, body) => { //callback function, ran when data is returned from http request
+	}, (error, response, body) => { //callback function, ran when data is returned from http request
 
 	if(error){
 		callback('Unable to connect to Google servers');
