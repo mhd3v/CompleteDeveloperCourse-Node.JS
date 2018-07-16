@@ -1,60 +1,26 @@
-var mongoose = require('mongoose');
+var express = require('express');
+var bodyParser = require('body-parser');
 
-mongoose.Promise = global.Promise; //tell mongoose to use default JS promises
+var mongoose = require('./db/mongoose'); //we're not requiring plain 'mongoose' here because we want to get the object that cofigured in the mongoose.js file (local export)
+var {Todo} = require('./models/todo');
+var {User} = require('./models/user');
 
-mongoose.connect('mongodb://localhost:27017/TodoApp');
+var app = express();
 
-//We define the model (schema) for a collection in mongoose since it's an ORM? 
-//we defined a model for Todo, moongose automatically made a collection of todos when we ran the code
+app.use(bodyParser.json()); //body parser lets us send json to our server
 
-var Todo = mongoose.model('Todo', {
-    text: {
-        type: String,
-        required: true, //mongoose validator
-        minlength: 1,     //mongoose validator
-        trim: true       //remove whitespaces
-    },
+app.post('/todos', (req, res) => {
+    var todo = new Todo({
+        text: req.body.text
+    });
 
-    completed: {
-        type: Boolean,
-        default: false
-    },
-
-    completedAt: {
-        type: Number,
-        default: null
-    }
+    todo.save(todo).then((doc) => {
+        res.send(doc); //if successfully saved to db, send the object back to the requester
+    }, (err) => {
+        res.status(400).send(err); //we're setting a status of 400 (bad request)
+    });
 });
 
-
-// //var newTodo = new Todo({text: 'Cook dinner'}); //create a new instance of the Todo model
-// var newTodo = new Todo({text: 'Do Node course', completed: false, completedAt: 12});
-
-// //newTodo.save() //returns a promise
-// newTodo.save().then((doc) => {
-//     console.log('Saved todo', doc);
-// }, (err) => {
-//     console.log('Unable to save todo');
-// });
-
-//==========================================================================================
-//Task - Make User model (email - require it - trim it - set type - set min length)
-
-var User = mongoose.model('User', {
-    email: {
-        type: String,
-        required: true,
-        minlength: 1,
-        trim: true
-    }
-});
-
-var newUser = new User({
-    email: 'mhd3v@mhd3v'
-});
-
-newUser.save().then((doc) => {
-    console.log('Saved user', doc);
-}, (err) => {
-    console.log('Unable to save user');
+app.listen(3000, () => {
+    console.log('Started on port 3000');
 });
