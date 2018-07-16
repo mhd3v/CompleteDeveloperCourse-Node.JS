@@ -25,7 +25,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', {useNewUrlParser: true}
 
     //==========================================================================================
 
-    //Task - Update a user document and update age by 1
+    //Task - Update a user document and update age by 10
 
     db.collection('Users').findOneAndUpdate({
         _id: new ObjectID('5b4cbe236d6c414e19b24eff')
