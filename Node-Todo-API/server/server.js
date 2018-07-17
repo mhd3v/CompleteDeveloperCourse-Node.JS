@@ -7,6 +7,7 @@ var {User} = require('./models/user');
 
 var app = express();
 
+//Middleware will fire before all the requests defined after. So in this case above, the body-parser middleware runs before the handler for POST /todos runs.
 app.use(bodyParser.json()); //body parser lets us send json to our server
 
 app.post('/todos', (req, res) => {
@@ -24,3 +25,5 @@ app.post('/todos', (req, res) => {
 app.listen(3000, () => {
     console.log('Started on port 3000');
 });
+
+module.exports = {app};
