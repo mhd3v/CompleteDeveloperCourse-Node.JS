@@ -4,10 +4,16 @@ const request = require('supertest');
 const {app} = require('./../server');
 const {Todo} = require('./../models/todo');
 
+
+var dummyTodos = [{text: 'do something'}, {text: 'second test text'}];
+
+
 //beforeEach lets us run some code before each test
 //we're using it so that we can check only if the new note was added or not
 beforeEach((done) => {      
-    Todo.remove({}).then(() => done());
+    Todo.remove({}).then(() => {
+        return Todo.insertMany(dummyTodos);
+    }).then(() => done());
 }); 
 
 describe('POST /todo', () => {
@@ -27,7 +33,7 @@ describe('POST /todo', () => {
             if(err)
                 return done(err);
             //else
-            Todo.find().then((todos) => {
+            Todo.find({text}).then((todos) => {
                 expect(todos.length).toBe(1);
                 expect(todos[0].text).toBe(text);
                 done();
@@ -47,10 +53,27 @@ describe('POST /todo', () => {
                 
             //else
             Todo.find().then((todos) => {
-                expect(todos.length).toBe(0);
+                expect(todos.length).toBe(2); //2 already added through dummyTodos[]
                 done();
             }).catch((e) => done(e));
         });
+
+    });
+
+});
+
+
+describe('GET /todo', () =>{
+
+    it('should get all todos', (done) => {
+
+        request(app)
+        .get('/todos')
+        .expect(200)
+        .expect((res) => {
+            expect(res.body.todos.length).toBe(2);
+        })
+        .end(done)
 
     });
 
