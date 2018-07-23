@@ -1,12 +1,16 @@
-var express = require('express');
-var bodyParser = require('body-parser');
+require('./config/config');
+const _ = require('lodash');
+const express = require('express');
+const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
 var mongoose = require('./db/mongoose'); //we're not requiring plain 'mongoose' here because we want to get the object that cofigured in the mongoose.js file (local export)
 var {Todo} = require('./models/todo');
 var {User} = require('./models/user');
-var {ObjectID} = require('mongodb');
 
 var app = express();
+
+const port = process.env.PORT;
 
 //Middleware will fire before all the requests defined after. So in this case above, the body-parser middleware runs before the handler for POST /todos runs.
 app.use(bodyParser.json()); //body parser lets us send json to our server
@@ -54,8 +58,62 @@ app.get('/todos/:id', (req, res) => { //url param defined by :anyVarName
    
 });
 
-app.listen(3000, () => {
-    console.log('Started on port 3000');
+app.delete('/todos/:id', (req, res) => { //url param defined by :anyVarName
+    
+    var id = req.params.id;
+
+    if(!ObjectID.isValid(id))
+        return res.status(404).send();
+    
+    Todo.findByIdAndRemove(id).then((todo) => {
+
+        if(!todo)
+            return res.status(404).send();
+
+        res.send({todo});
+
+    }).catch((err) => {
+        res.status(400).send();
+    });
+    
+   
+});
+
+app.patch('/todos/:id', (req, res) => {
+
+    var id = req.params.id;
+
+    //we're using lodash to insure that only the properties we want can be updated. 
+    var body = _.pick(req.body, ['text', 'completed']); //.pick() takes an object and pulls out the given properties if found in the object 
+
+    if(!ObjectID.isValid(id))
+        return res.status(404).send();
+
+    if(_.isBoolean(body.completed) && body.completed){ //marking todo as completed
+        body.completedAt = new Date().getTime();
+    }
+    else{   //marking todo as not completed
+        body.completed = false;
+        body.completedAt = null;
+    }
+
+    Todo.findByIdAndUpdate(id, {$set : body}, {
+        new: true //same as returnOrginal : true
+    }).then((todo) => {
+
+        if(!todo)
+        return res.status(400).send();
+
+        res.send({todo});
+
+    }).catch((e) => {
+        res.send(400).send();
+    });
+
+});
+
+app.listen(port, () => {
+    console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};
